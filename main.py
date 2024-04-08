@@ -78,7 +78,6 @@ class Dialog(QtWidgets.QDialog):
         self.finalize.setGeometry(QtCore.QRect(160, 220, 150, 65))
         self.finalize.setText("Добавить в корзину")
         self.finalize.clicked.connect(add)
-        print("И не здесь")
 
 class Window(QMainWindow):
     def __init__(self):
@@ -86,17 +85,20 @@ class Window(QMainWindow):
         self.ui = Ui_MainWindow()
         self.ui.setupUi(self)
         books = []
+        books_show = []
         def checky_check():
-            print(books)
-            book = Show_books(books)
+            for i in range(len(checkboxes)):
+                if checkboxes[i].isChecked():
+                    add_books(books[i])
+            book = Show_books(books_show)
             self.book_window = book
             book.show()
             for k in range(len(checkboxes)):
                 checkboxes[k].setChecked(False)
-            books.clear()
+            books_show.clear()
         def add_books(j):
-            if j not in books:
-                books.append(j)
+            if j not in books_show:
+                books_show.append(j)
         def add_dialog():
             dial = Dialog()
             self.Dialog = dial
@@ -121,10 +123,10 @@ class Window(QMainWindow):
             books_data = get_books(i[0])
             for j in books_data:
                 ch = QtWidgets.QCheckBox(self)
-                ch.stateChanged.connect(lambda state, j=j: add_books(j))
-                ch.setGeometry(QtCore.QRect(160, height-65, 180, 150))
-                ch.setObjectName(f"label_{j[0]}")
+                ch.setGeometry(QtCore.QRect(160, height, 180, 20))  # Переносим геометрию чекбоксов в пределы окна
+                ch.setObjectName(f"check_{j[1]}")
                 checkboxes.append(ch)
+                books.append(j)
 
                 lb_t = QtWidgets.QLabel(self)
                 lb_t.setGeometry(QtCore.QRect(210, height, 210, 150))
@@ -141,7 +143,7 @@ class Window(QMainWindow):
                 lb_t.adjustSize()
 
                 height += 30
-            height += 120
+            height += 90
         add = QtWidgets.QPushButton(self)
         add.setGeometry(QtCore.QRect(250, height, 150, 65))
         add.setText("Добавить")
